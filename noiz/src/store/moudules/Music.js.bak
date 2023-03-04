@@ -1,0 +1,72 @@
+import { storage } from "@/tools/helper";
+import { apiRequest } from "@/tools/helper";
+// import axios from "axios";
+
+const namespaced = true;
+const state = {
+    currentSong: storage.get("currentSong") || {},
+    currentPlaylist: storage.get("currentPlaylist") || [],
+    currentIndex: storage.get("currentIndex") || 0,
+    currentPercent: storage.get("currentPercent") || 0,
+    timeEnd: 0,
+    countDownActive: false,
+};
+
+const getters = {};
+const mutations = {
+    set_currentSong(state, value) {
+        state.currentSong = value;
+        storage.set("currentSong", value);
+    },
+    set_currentPlaylist(state, value) {
+        state.currentPlaylist = value;
+        storage.set("currentPlaylist", value);
+    },
+    set_currentIndex(state, value) {
+        state.currentIndex = value;
+        storage.set("currentIndex", value);
+    },
+
+    set_currentPercent(state, value) {
+        state.currentPercent = value;
+        storage.set("currentPercent", value);
+    },
+};
+
+const actions = {
+    handlePlayExactSong({ commit, state, dispatch }, song) {
+        // console.log(song);
+        const songPercent = storage.get("songPercent") || 0;
+        const currentTime = storage.get("currentTime") || 0;
+        commit;
+        state;
+        commit("Controller/set_loading", true, { root: true });
+        dispatch("getCurrentSongStreaming", song.encodeId).then((songStreaming) => {
+            commit("Controller/destroy_audio", {}, { root: true });
+            commit("set_currentSong", { song, songStreaming });
+            commit("Controller/set_audio", songStreaming, { root: true });
+            commit("Controller/set_duration", song.duration, { root: true });
+            commit("Controller/set_isPlaying", true, { root: true });
+            commit("Controller/set_playAudio", {}, { root: true });
+            dispatch("Controller/handleOnPlaying", { songPercent, currentTime }, { root: true });
+            commit("Controller/set_loading", false, { root: true });
+        });
+    },
+    async getCurrentSongStreaming({ commit, state }, songId) {
+        commit;
+        state;
+        return await apiRequest(`/song/${songId}/streaming`)
+            .then((res) => {
+                return res[128] ? res[128] : null;
+            })
+            .catch((e) => console.log(e));
+    },
+};
+
+export default {
+    namespaced,
+    state,
+    getters,
+    mutations,
+    actions,
+};

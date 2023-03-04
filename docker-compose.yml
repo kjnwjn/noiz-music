@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+    app:
+        build: ./noiz
+        ports:
+            - ${PORT_APP}:${PORT_APP}
+    server:
+        build: ./noiz-backend
+        ports:
+            - ${PORT_SERVER}:${PORT}

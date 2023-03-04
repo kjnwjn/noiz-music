@@ -1,0 +1,177 @@
+import { storage } from "@/tools/helper";
+import { h } from "vue";
+const namespaced = true;
+const state = {
+    audio: null,
+    isLoading: false,
+    isPlaying: false,
+    isRepeat: storage.get("isRepeat") || false,
+    isShuffle: storage.get("isShuffle") || false,
+    songPercent: storage.get("songPercent") || 0,
+    rangeValueBar: "",
+    currentTime: storage.get("currentTime") || 0,
+    duration: storage.get("duration") || 0,
+};
+
+const getters = {
+    getController: (state) => {
+        return state;
+    },
+};
+const mutations = {
+    set_audio(state, url) {
+        state.audio = new Audio();
+        state.audio.src = url;
+    },
+    set_audioCurrentTime(state, value) {
+        if (state.audio) {
+            state.audio.currentTime = value;
+        }
+    },
+    async set_playAudio(state) {
+        state.audio ? state.audio.play() : undefined;
+    },
+    set_loopAudio(state, value) {
+        state.audio ? (state.audio.loop = value) : undefined;
+    },
+    set_loadAudio(state) {
+        state.audio ? state.audio.load() : undefined;
+    },
+
+    set_pauseAudio(state) {
+        state.audio ? state.audio.pause() : undefined;
+    },
+    destroy_audio(state) {
+        state.audio ? state.audio.pause() : undefined;
+        state.audio = null;
+    },
+    set_loading(state, value) {
+        state.isLoading = value;
+    },
+    set_isPlaying(state, value) {
+        state.isPlaying = value;
+    },
+    set_repeat(state, value) {
+        state.isRepeat = value;
+        storage.set("isRepeat", value);
+    },
+    set_shuffle(state, value) {
+        state.isShuffle = value;
+        storage.set("isShuffle", value);
+    },
+    set_songPercent(state, value) {
+        state.songPercent = value;
+    },
+    set_rangeValueBar(state, value) {
+        state.rangeValueBar = value;
+    },
+    set_currentTime(state, value) {
+        state.currentTime = value;
+        storage.set("currentTime", value);
+    },
+    set_duration(state, value) {
+        state.duration = value;
+        storage.set("duration", value);
+    },
+};
+
+const actions = {
+    handleShuffle({ commit, state }) {
+        commit("set_shuffle", !state.isShuffle);
+    },
+    handleRepeat({ commit, state }) {
+        commit("set_repeat", !state.isRepeat);
+    },
+    handleLoading({ commit }, value) {
+        commit("set_loading", value);
+    },
+    handlePause({ commit }) {
+        commit("set_pauseAudio");
+        commit("set_isPlaying", false);
+        commit("set_loading", false);
+    },
+    async handlePlayBtn({ commit, state, dispatch, rootState }) {
+        rootState;
+        state;
+        const songPercent = storage.get("songPercent") || 0;
+        const currentTime = storage.get("currentTime") || 0;
+        commit("set_audioCurrentTime", currentTime);
+        commit("set_currentTime", currentTime);
+        commit("set_isPlaying", true);
+        if (state.audio.paused && state.isPlaying) {
+            commit("set_playAudio");
+        }
+        commit("set_loading", false);
+        console.log("handlePlayBtn");
+        await dispatch("handleOnPlaying", { songPercent, currentTime });
+    },
+    handleOnPlaying({ commit, state, dispatch, rootState }, { songPercent, currentTime }) {
+        state.audio.addEventListener("timeupdate", () => {
+            songPercent = (state.audio.currentTime * 100) / state.audio.duration;
+            commit("set_songPercent", songPercent);
+            commit("set_currentTime", state.audio.currentTime || currentTime);
+        });
+        console.log("handleOnPlaying");
+        console.log(rootState.Music.currentIndex);
+        dispatch("handleOnEnded");
+    },
+    async handleOnEnded({ state, commit, dispatch, rootState }) {
+        await state.audio.addEventListener("ended", () => {
+            rootState;
+            dispatch;
+            commit("set_currentTime", 0);
+            commit("set_songPercent", 0);
+            commit("set_isPlaying", false);
+            commit("destroy_audio");
+            console.log("handleOnEnded");
+            dispatch("handleNextSong");
+        });
+    },
+    async handleNextSong({ state, rootState, commit, dispatch }) {
+        state;
+        const currentPlaylist = rootState.Music.currentPlaylist.length > 0 ? rootState.Music.currentPlaylist : [];
+
+        if (currentPlaylist.length > 0) {
+            if (state.isRepeat) {
+                console.log("isRepeat");
+                commit("set_audio", rootState.Music.currentSong.songStreaming);
+                commit("set_isPlaying", true);
+                commit("set_playAudio");
+                await dispatch("handleOnPlaying", { songPercent: 0, currentTime: 0 });
+            } else {
+                console.log("handleNextSong");
+                const nextSong =
+                    rootState.Music.currentIndex + 1 < currentPlaylist.length ? currentPlaylist[rootState.Music.currentIndex + 1] : currentPlaylist[0];
+
+                await dispatch("Music/getCurrentSongStreaming", nextSong.encodeId, { root: true }).then((songStreaming) => {
+                    commit("Music/set_currentSong", { song: nextSong, songStreaming }, { root: true });
+                    commit("set_audio", songStreaming);
+                    commit("set_duration", nextSong.duration);
+                    commit("Music/set_currentIndex", currentPlaylist.indexOf(nextSong), { root: true });
+                    commit("set_isPlaying", true);
+                    commit("set_playAudio");
+                    dispatch("handleOnPlaying", { songPercent: 0, currentTime: 0 });
+                });
+            }
+        } else {
+            console.log("sai");
+        }
+    },
+
+    handleOnSeeking({ commit, state }, value) {
+        commit;
+        state;
+        const currentTime = (state.duration / 100) * value;
+        commit("set_audioCurrentTime", currentTime);
+        commit("set_currentTime", currentTime);
+        commit("set_songPercent", value);
+    },
+};
+
+export default {
+    namespaced,
+    state,
+    getters,
+    mutations,
+    actions,
+};

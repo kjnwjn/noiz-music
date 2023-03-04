@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --main-color: #466175;
+    --bg-color: #1b2d3b;
+    --text-color: #fff;
+    --text-color-hover: #1ae8e1;
+    --btn-color: #6b91b9;
+    --btn-color-hover: #5b7998;
+    --nav-width: 250px;
+    --button-size : 32px;
+    --text-size : 1rem;
+    --header-height: 62px;
+    --btn-width : 33px;
+    --controller-height : 91px;
+  }
+  *{
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  @keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
