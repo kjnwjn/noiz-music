@@ -94,7 +94,6 @@ const actions = {
         dispatch("Music/handlePlayAudioUrl", { currentTime: state.currentTime, songPercent: state.songPercent }, { root: true });
     },
     handleOnPlaying({ commit, state, rootState }) {
-        console.log(state.audio.currentTime);
         if (rootState.Music.currentSong.songStreaming && state.audio) {
             commit("set_loading", false);
             let songPercent = (state.audio.currentTime * 100) / state.audio.duration;
