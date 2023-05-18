@@ -11,40 +11,17 @@
 <script>
 import Navlist from "@/components/nav/Navlist.component";
 import PlayingBar from "@/components/playingBar/PlayingBar.component";
-// import HeaderContainer from "@/components/main/Header.component";
 
 export default {
     components: {
         Navlist,
         PlayingBar,
     },
-    methods: {},
-    //   mounted () {
-    //      fetch("http://localhost:3000/api/v1/get-home?api_key=${apiKey}")
-    //       .then((res) => res.json())
-    //       .then((res) => {
-    //         let dataHome = res.data.items;
-    //         dataHome.forEach((dataItem) => {
-    //           return dataItem.sectionType == "playlist"
-    //             ? this.playList.push(dataItem)
-    //             : "";
-    //         });
-    //       });
-    //   }
 };
 </script>
 
 <style lang="scss">
 body {
-    // background: linear-gradient(
-    //   to top,
-    //   var(--bg-color),
-    //   #315672,
-    //   rgb(146, 138, 138)
-    // );
-
-    #app {
-    }
     #main-content {
         width: calc(100% - var(--nav-width));
         background: linear-gradient(to top, var(--bg-color), #315672, rgb(146, 138, 138));
@@ -53,6 +30,26 @@ body {
         height: 100vh;
         padding-top: var(--controller-height);
         overflow: hidden scroll;
+        /* width */
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        /* Track */
+        &::-webkit-scrollbar-track {
+            background: linear-gradient(to top, var(--bg-color), #315672, rgb(146, 138, 138));
+        }
+
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        &::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     }
 }
 </style>

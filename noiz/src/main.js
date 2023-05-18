@@ -5,7 +5,7 @@ import store from "@/store";
 import "@/assets/tailwind.css";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { AVLine } from "vue-audio-visual";
+// import { AVLine } from "vue-audio-visual";
 export const eventBus = new Vue();
 import {
     faUserSecret,
@@ -50,7 +50,7 @@ library.add(
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("themi-fy", ThemifyIcon);
-Vue.component("av-line", AVLine);
+// Vue.component("av-line", AVLine);
 Vue.config.productionTip = false;
 
 // Vue.use(AVPlugin);

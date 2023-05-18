@@ -9,6 +9,7 @@ const state = {
     songPercent: storage.get("songPercent") || 0,
     currentTime: storage.get("currentTime") || 0,
     duration: storage.get("duration") || 0,
+    volume: storage.get("volume") || 0,
 };
 
 const getters = {
@@ -69,6 +70,10 @@ const mutations = {
         state.duration = value;
         storage.set("duration", value);
     },
+    set_volume(state, value) {
+        state.volume = value;
+        storage.set("volume", value);
+    },
 };
 
 const actions = {
@@ -91,7 +96,11 @@ const actions = {
         let currentTime = storage.get("currentTime") || 0;
         commit("set_currentTime", currentTime);
         commit("set_songPercent", songPercent);
-        dispatch("Music/handlePlayAudioUrl", { currentTime: state.currentTime, songPercent: state.songPercent }, { root: true });
+        dispatch(
+            "Music/handlePlayAudioUrl",
+            { currentTime: state.currentTime, songPercent: state.songPercent },
+            { root: true }
+        );
     },
     handleOnPlaying({ commit, state, rootState }) {
         if (rootState.Music.currentSong.songStreaming && state.audio) {
@@ -116,7 +125,10 @@ const actions = {
         commit("destroy_audio");
 
         let currentPlaylist = rootState.Music.currentPlaylist.length > 0 ? rootState.Music.currentPlaylist : [];
-        let nextSong = rootState.Music.currentIndex + 1 < currentPlaylist.length ? currentPlaylist[rootState.Music.currentIndex + 1] : currentPlaylist[0];
+        let nextSong =
+            rootState.Music.currentIndex + 1 < currentPlaylist.length
+                ? currentPlaylist[rootState.Music.currentIndex + 1]
+                : currentPlaylist[0];
 
         state.isShuffle
             ? commit("Music/set_currentIndex", randomIndex(currentPlaylist.length), { root: true })
@@ -143,6 +155,11 @@ const actions = {
         commit("set_audioCurrentTime", currentTime);
         commit("set_currentTime", currentTime);
         commit("set_songPercent", value);
+    },
+    handleUpdateVolume({ commit, state }, value) {
+        commit;
+        state;
+        commit("set_volume", value);
     },
 };
 
