@@ -5,41 +5,79 @@
                 <search-box> </search-box>
             </template>
         </header-container>
-        <!-- <section class="py-8 grid gap-y-9">
-            <section-type
-                v-for="item in playList"
-                :key="item.encodeId"
-                :title="item.title"
-                :data="item.items"
-            ></section-type>
-        </section> -->
-        <section class="py-4 grid grid-cols-2 gap-4">
-            <div class="top-result">
+
+        <section class="py-4 grid gap-4 tablet:grid-cols-1 laptop:grid-cols-1 desktop:grid-cols-2" v-if="searchData">
+            <div class="top-result" v-show="searchData?.top.objectType == 'song'">
                 <h1 class="title_section">Top Result</h1>
                 <div class="top_main-result grid grid-row-3 gap-4">
                     <div class="img-card w-fit">
-                        <img
-                            src="https://photo-resize-zmp3.zmdcdn.me/w165_r1x1_jpeg/cover/8/a/8/e/8a8e74ad943da5b23cfb4f709aa31988.jpg"
-                        />
+                        <img :src="searchData.top.thumbnail" />
                     </div>
                     <div class="title">
-                        <h1>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laudantium, tenetur!</h1>
+                        <h1>{{ searchData.top.title }}</h1>
                     </div>
                     <div class="desc">
-                        <a href="#">Lưu hương giang</a>
+                        <a href="#">{{ searchData.top.artistsNames }}</a>
                         <button>Album</button>
                     </div>
                 </div>
             </div>
-            <div class="top-songs">
+            <div class="top-result" v-show="searchData?.top.objectType == 'artist'">
+                <h1 class="title_section">Top Result</h1>
+                <div class="top_main-result grid grid-row-3 gap-4">
+                    <div class="img-card w-fit">
+                        <img :src="searchData.top.thumbnail" />
+                    </div>
+                    <div class="title">
+                        <h1>{{ searchData.top.name }}</h1>
+                    </div>
+                    <div class="desc">
+                        <button>{{ searchData.top.objectType }}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="top-result" v-show="searchData?.top.objectType == 'playlist'">
+                <h1 class="title_section">Top Result</h1>
+                <div class="top_main-result grid grid-row-3 gap-4">
+                    <div class="img-card w-fit">
+                        <img :src="searchData.top.thumbnail" />
+                    </div>
+                    <div class="title">
+                        <h1>{{ searchData.top.title }}</h1>
+                    </div>
+                    <div class="desc">
+                        <a href="#">By {{ searchData.top.artistsNames }}</a>
+                        <button>{{ searchData.top.objectType }}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="top-songs" v-if="searchData?.songs">
                 <h1 class="title_section">Songs</h1>
-                <ul class="list-song">
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
+                <ul class="list-song" v-for="item in searchData.songs" :key="item.encodeId">
+                    <li><song-item :songItem="item"></song-item></li>
                 </ul>
+            </div>
+        </section>
+        <section class="pb-8 grid gap-y-5" v-show="searchData && searchData.topSuggest">
+            <h1 class="title_section">Top Suggests</h1>
+            <div class="grid desktop:grid-cols-4 laptop:grid-cols-3 tablet:grid-cols-2 gap-6">
+                <card-item
+                    class="text-white"
+                    v-for="(item, index) in searchData.topSuggest"
+                    :key="index"
+                    :cardItem="item"
+                ></card-item>
+            </div>
+        </section>
+        <section class="pb-8 grid gap-y-5" v-show="searchData && searchData.playlists">
+            <h1 class="title_section">Playlist</h1>
+            <div class="grid desktop:grid-cols-4 laptop:grid-cols-3 tablet:grid-cols-2 gap-6">
+                <card-item
+                    class="text-white"
+                    v-for="(item, index) in searchData.playlists"
+                    :key="index"
+                    :cardItem="item"
+                ></card-item>
             </div>
         </section>
     </div>
@@ -48,33 +86,37 @@
 <script>
 import HeaderContainer from "@/components/main/Header.component";
 import SearchBox from "@/components/searchBox/SearchBox.component";
-// import SectionType from "@/components/section/HomeSection/SectionType";
+import SongItem from "@/components/section/SearchSection/SongItem";
+import CardItem from "@/components/card/CardItem.component";
+
+import { mapState as mapSearchState, mapActions as mapSearchActions } from "@/store/helper/Search";
+
 // const { apiKey, apiUrl } = require("@/configs/configs");
+
+import { mapState as mapMusicState } from "@/store/helper/Music";
 
 export default {
     components: {
         HeaderContainer,
         SearchBox,
-        // SectionType,
+        SongItem,
+        CardItem,
     },
     data: function () {
         return {
             playList: [],
         };
     },
-    // created() {
-    //     fetch(`${apiUrl}/get-home?api_key=${apiKey}`)
-    //         .then((res) => res.json())
-    //         .then((res) => {
-    //             console.log(res);
-    //             let dataHome = res.data.items;
-    //             dataHome.forEach((dataItem) => {
-    //                 if (dataItem.sectionType == "playlist") {
-    //                     this.playList.push(dataItem);
-    //                 }
-    //             });
-    //         });
-    // },
+    computed: {
+        ...mapMusicState(["currentSong"]),
+        ...mapSearchState(["searchData"]),
+    },
+    mounted() {
+        this.handleSearchBox("");
+    },
+    methods: {
+        ...mapSearchActions(["handleSearchBox"]),
+    },
 };
 </script>
 
@@ -84,6 +126,7 @@ export default {
     min-height: 300px;
     border-radius: 5px;
     .top_main-result {
+        max-height: 76%;
         border-radius: 10px;
         cursor: pointer;
         background: radial-gradient(black, transparent);
@@ -91,8 +134,8 @@ export default {
         margin: 10px;
         transition: all 0.2s linear;
         img {
-            width: 84px;
-            height: 84px;
+            width: 90px;
+            height: 90px;
             border-radius: 5px;
             transition: all 0.2s linear;
         }
@@ -133,10 +176,21 @@ export default {
     .list-song {
         border-radius: 10px;
         cursor: pointer;
-        background: radial-gradient(black, transparent);
-        padding: 20px;
+        // background: radial-gradient(black, transparent);
+        // padding: 20px;
         margin: 10px;
         transition: all 0.2s linear;
+        li {
+            transition: all 0.2s linear;
+
+            &:hover {
+                border-radius: 5px;
+                background: #575149;
+                img {
+                    box-shadow: 0 8px 8px #0000004d;
+                }
+            }
+        }
     }
 }
 .title_section {

@@ -36,15 +36,14 @@ export default {
     methods: {
         checkObj,
     },
+    props: {
+        songItem: {
+            type: Object,
+        },
+    },
     computed: {
         ...mapMusicState(["currentSong"]),
         ...mapControllerState(["isPlaying"]),
-    },
-    watch: {
-        // cdAnimate: this.$refs.cd_thumb.animate([{ transform: "rotate(360)" }], {
-        //   duration: 10,
-        //   iterations: Infinity,
-        // }),
     },
 };
 </script>
@@ -54,7 +53,7 @@ export default {
     width: 80px;
     height: 80px;
     img {
-        border-radius: 50%;
+        border-radius: 10%;
         width: 80%;
         background-size: cover;
         background-position: center;
