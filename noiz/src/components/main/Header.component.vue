@@ -74,7 +74,7 @@ export default {
         }
     }
     #suggest-tag {
-        // display: none;
+        display: none;
         position: absolute;
         height: var(--header-height);
         width: 100%;

@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import HintSection from "@/components/section/HintSection";
-import BannerSection from "@/components/section/BannerSection";
-import SectionType from "@/components/section/SectionType";
+import HintSection from "@/components/section/HomeSection/HintSection";
+import BannerSection from "@/components/section/HomeSection/BannerSection";
+import SectionType from "@/components/section/HomeSection/SectionType";
 import HeaderContainer from "@/components/main/Header.component";
 import UpgradeBtn from "@/components/button/UpgradeBtn.component";
 import { mapState as mapMusicState } from "@/store/helper/Music";
