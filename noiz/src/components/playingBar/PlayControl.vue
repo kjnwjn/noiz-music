@@ -9,7 +9,7 @@
                     <font-awesome-icon icon="fa-solid fa-backward-step" />
                 </button>
             </div>
-            <play-button class="play-btn"></play-button>
+            <play-button class="play-btn" :playlistId="currentPlaylistId"></play-button>
             <div class="play-control_right">
                 <button class="next_btn" @click="handleNextSong">
                     <font-awesome-icon icon="fa-solid fa-forward-step" />
@@ -75,7 +75,7 @@ export default {
             "songPercent",
             "duration",
         ]),
-        ...mapMusicState(["currentSong"]),
+        ...mapMusicState(["currentSong", "currentPlaylistId"]),
     },
     mounted() {},
     methods: {

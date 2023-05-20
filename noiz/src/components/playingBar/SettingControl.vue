@@ -7,6 +7,7 @@
             <li class="item-func">
                 <div>
                     <ThemifyIcon icon="volume" />
+                    <div class="mute"></div>
                 </div>
             </li>
             <li class="item-func volume-item">
@@ -61,7 +62,7 @@ export default {
         console.log(this.$refs.progress.value);
     },
     methods: {
-        ...mapControllerMutations(["set_volume"]),
+        ...mapControllerMutations(["set_volume", "set_audioVolume"]),
         ...mapControllerActions(["handleUpdateVolume"]),
         changeProcessBarValue: function (e) {
             let width = e.target.value;

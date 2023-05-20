@@ -13,6 +13,9 @@ import Navlist from "@/components/nav/Navlist.component";
 import PlayingBar from "@/components/playingBar/PlayingBar.component";
 
 export default {
+    metaInfo: {
+        title: "NOIZ",
+    },
     components: {
         Navlist,
         PlayingBar,
@@ -24,12 +27,13 @@ export default {
 body {
     #main-content {
         width: calc(100% - var(--nav-width));
-        background: linear-gradient(to top, var(--bg-color), #315672, rgb(146, 138, 138));
+        background: #222627;
         position: absolute;
         left: var(--nav-width);
         height: 100vh;
-        padding-top: var(--controller-height);
+        // padding-top: var(--controller-height);
         overflow: hidden scroll;
+        padding-top: var(--header-height);
         /* width */
         &::-webkit-scrollbar {
             width: 10px;
@@ -37,7 +41,7 @@ body {
 
         /* Track */
         &::-webkit-scrollbar-track {
-            background: linear-gradient(to top, var(--bg-color), #315672, rgb(146, 138, 138));
+            background: #222627;
         }
 
         /* Handle */

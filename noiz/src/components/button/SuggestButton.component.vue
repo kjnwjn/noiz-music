@@ -1,15 +1,13 @@
 <template>
-    <button class="upgrade-btn"><p>upgrade</p></button>
+    <button class="suggest-btn"><p>upgrade</p></button>
 </template>
 
 <script>
-export default {
-    components: {},
-};
+export default {};
 </script>
 
 <style lang="scss" scoped>
-.upgrade-btn {
+.suggest-btn {
     width: 95px;
     height: 37px;
     border-radius: 20px;

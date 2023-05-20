@@ -2,10 +2,11 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
+import Meta from "vue-meta";
 // import AboutView from "@/views/AboutView.vue";
 
 Vue.use(VueRouter);
-
+Vue.use(Meta);
 const routes = [
     {
         path: "/",
@@ -30,7 +31,6 @@ const routes = [
         component: () => import(/* webpackChunkName: "playlist" */ "@/views/PlaylistDetailView.vue"),
     },
 ];
-
 const router = new VueRouter({
     routes,
     mode: "history",

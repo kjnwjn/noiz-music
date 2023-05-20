@@ -34,65 +34,112 @@
                     <br />
                     <tbody v-if="playList">
                         <tr class="song_item" v-for="(song, index) in playList.song.items" :key="song.encodeId">
-                            <td class="stt">
-                                <p
-                                    class="stt_val"
-                                    v-if="(!isPlaying && !isLoading) || currentSong.song?.encodeId != song.encodeId"
-                                >
-                                    {{ index }}
-                                </p>
-                                <img
-                                    v-if="!isLoading && isPlaying && currentSong.song?.encodeId == song.encodeId"
-                                    src="@/assets/icon-playing.gif"
-                                />
-                                <div
-                                    @click="
-                                        () => {
-                                            handlePlayExactSong({
-                                                song,
-                                                index,
-                                                playlist: playList.song.items,
-                                            });
-                                            isPause = false;
-                                        }
-                                    "
-                                >
-                                    <font-awesome-icon
-                                        v-if="isLoading && currentSong.song?.encodeId == song.encodeId"
-                                        class="loading"
-                                        icon="fa-sharp fa-regular fa-spinner "
-                                    />
-                                    <font-awesome-icon
-                                        v-if="(isPlaying && currentSong.song?.encodeId != song.encodeId) || isPause"
-                                        icon="fa-solid fa-play"
-                                        class="text-sm play-btn_stt hidden m-0"
-                                    />
-                                </div>
-                            </td>
-                            <td class="track-list">
-                                <div class="track-list_img">
-                                    <img :src="song.thumbnail" alt="" />
-                                </div>
-                                <div class="track-list_content">
-                                    <router-link
-                                        to="#"
-                                        class="track-list_title"
-                                        :class="{
-                                            active: !isLoading && currentSong.song?.encodeId == song.encodeId,
-                                        }"
+                            <template v-if="song.streamingStatus != 2">
+                                <td class="stt">
+                                    <p
+                                        class="stt_val"
+                                        v-if="(!isPlaying && !isLoading) || currentSong.song?.encodeId != song.encodeId"
                                     >
-                                        {{ song.title }}
-                                    </router-link>
-                                    <p class="track-list_decs">
-                                        <router-link to="#"> {{ song.artistsNames }}</router-link>
+                                        {{ index }}
                                     </p>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="song_album">{{ song.album?.title }}</p>
-                            </td>
-                            <td>{{ dateFormat(song.releaseDate) }}</td>
-                            <td>{{ timeFormat(song.duration) }}</td>
+                                    <img
+                                        v-if="!isLoading && isPlaying && currentSong.song?.encodeId == song.encodeId"
+                                        src="@/assets/icon-playing.gif"
+                                    />
+                                    <div
+                                        @click="
+                                            () => {
+                                                handlePlayExactSong({
+                                                    song,
+                                                    index,
+                                                    playlist: playList.song.items,
+                                                    playlistId: playList.encodeId,
+                                                });
+                                                isPause = false;
+                                            }
+                                        "
+                                    >
+                                        <font-awesome-icon
+                                            v-if="isLoading && currentSong.song?.encodeId == song.encodeId"
+                                            class="loading"
+                                            icon="fa-solid fa-spinner"
+                                        />
+                                        <font-awesome-icon
+                                            v-if="(isPlaying && currentSong.song?.encodeId != song.encodeId) || isPause"
+                                            icon="fa-solid fa-play"
+                                            class="text-sm play-btn_stt hidden m-0"
+                                        />
+                                    </div>
+                                </td>
+                                <td class="track-list">
+                                    <div class="track-list_img">
+                                        <img :src="song.thumbnail" alt="" />
+                                    </div>
+                                    <div class="track-list_content">
+                                        <router-link
+                                            to="#"
+                                            class="track-list_title"
+                                            :class="{
+                                                active: !isLoading && currentSong.song?.encodeId == song.encodeId,
+                                            }"
+                                        >
+                                            {{ song.title }}
+                                        </router-link>
+                                        <p class="track-list_decs">
+                                            <router-link to="#"> {{ song.artistsNames }}</router-link>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="song_album">{{ song.album?.title }}</p>
+                                </td>
+                                <td>{{ dateFormat(song.releaseDate) }}</td>
+                                <td>{{ timeFormat(song.duration) }}</td>
+                            </template>
+                            <template v-else>
+                                <td class="stt">
+                                    <p
+                                        class="stt_val"
+                                        v-if="(!isPlaying && !isLoading) || currentSong.song?.encodeId != song.encodeId"
+                                    >
+                                        {{ index }}
+                                    </p>
+                                    <div @click="upgradeAccount()">
+                                        <font-awesome-icon
+                                            v-if="(isPlaying && currentSong.song?.encodeId != song.encodeId) || isPause"
+                                            icon="fa-solid fa-play"
+                                            class="text-sm play-btn_stt hidden m-0"
+                                        />
+                                    </div>
+                                </td>
+                                <td class="track-list">
+                                    <div class="track-list_img">
+                                        <img :src="song.thumbnail" alt="" />
+                                    </div>
+                                    <div class="track-list_content">
+                                        <div class="flex justify-between items-center">
+                                            <router-link
+                                                to="#"
+                                                class="track-list_title"
+                                                :class="{
+                                                    active: !isLoading && currentSong.song?.encodeId == song.encodeId,
+                                                }"
+                                            >
+                                                {{ song.title }}
+                                            </router-link>
+                                            <p class="px-3 rounded-md bg-red-500 mr-3">VIP</p>
+                                        </div>
+                                        <p class="track-list_decs">
+                                            <router-link to="#"> {{ song.artistsNames }}</router-link>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="song_album">{{ song.album?.title }}</p>
+                                </td>
+                                <td>{{ dateFormat(song.releaseDate) }}</td>
+                                <td>{{ timeFormat(song.duration) }}</td>
+                            </template>
                         </tr>
                     </tbody>
                 </table>
@@ -114,9 +161,15 @@ import {
     // mapMutations as mapMusicMutations,
 } from "@/store/helper/Music";
 import { mapState as mapControllerState } from "@/store/helper/Controller";
+import { mapGetters as mapMusicGetter } from "@/store/helper/Music";
+import { mapMutations as mapMusicMutations } from "@/store/helper/Music";
 import { eventBus } from "@/main";
 const { apiKey, apiUrl } = require("@/configs/configs");
 export default {
+    metaInfo: function () {
+        return { title: this.getTitle };
+    },
+
     components: {
         headerContainer,
         profileContainer,
@@ -135,9 +188,13 @@ export default {
         timeFormat: dateTimeFormat.getTime,
         checkObj,
         ...mapMusicActions(["handlePlayExactSong"]),
-        // ...mapMusicMutations(["set_currentIndex", "set_currentPlaylist"]),
+        ...mapMusicMutations(["set_metaTitle"]),
+        upgradeAccount() {
+            alert("upgrade account");
+        },
     },
     computed: {
+        ...mapMusicGetter(["getTitle"]),
         ...mapControllerState(["isLoading", "isPlaying"]),
         ...mapMusicState(["currentSong"]),
     },
@@ -149,7 +206,9 @@ export default {
         await axios
             .get(`${apiUrl}/playlist/${this.$route.params.id}/details?api_key=${apiKey}`)
             .then((res) => {
+                console.log(res);
                 this.playList = res.data.data || null;
+                this.set_metaTitle(this.playList.title);
             })
             .catch((e) => {
                 console.error(e);
@@ -188,7 +247,9 @@ export default {
             font-size: 0.75rem;
         }
         tr {
-            border-radius: 5px;
+            border-radius: 10px;
+            border-bottom: 1px solid #bac0c06b;
+            padding: 5px 0;
             .stt {
                 width: 42px;
                 text-align: center;
@@ -255,7 +316,7 @@ export default {
             &:hover {
                 background: #7f8f9257;
                 transition: all linear 0.2s;
-                border-radius: 5px;
+                border-radius: 10px;
                 .stt_val {
                     visibility: hidden;
                     display: none;

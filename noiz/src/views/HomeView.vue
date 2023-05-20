@@ -1,13 +1,16 @@
 <template>
     <div>
-        <header-container>
+        <header-container class="header">
             <template #upgrade>
                 <div class="w-36 m-auto text-center">
                     <upgrade-btn></upgrade-btn>
                 </div>
             </template>
         </header-container>
-        <section class="pb-8">
+        <section class="pb-8" v-if="bannerList?.length > 0">
+            <banner-section :bannerList="bannerList[0].items"></banner-section>
+        </section>
+        <section class="pb-8" v-if="currentPlaylistId">
             <hint-section class="hint-container"></hint-section>
         </section>
 
@@ -24,12 +27,12 @@
 
 <script>
 import HintSection from "@/components/section/HintSection";
+import BannerSection from "@/components/section/BannerSection";
 import SectionType from "@/components/section/SectionType";
 import HeaderContainer from "@/components/main/Header.component";
 import UpgradeBtn from "@/components/button/UpgradeBtn.component";
+import { mapState as mapMusicState } from "@/store/helper/Music";
 const { apiKey, apiUrl } = require("@/configs/configs");
-
-// import axios from "axios";
 export default {
     name: "HomeView",
     components: {
@@ -37,23 +40,32 @@ export default {
         SectionType,
         HeaderContainer,
         UpgradeBtn,
+        BannerSection,
     },
     data: function () {
         return {
             audio: null,
             isPlaying: false,
             playList: [],
+            bannerList: [],
         };
     },
-
+    computed: {
+        ...mapMusicState(["currentPlaylistId"]),
+    },
     methods: {},
     created() {
         fetch(`${apiUrl}/get-home?api_key=${apiKey}`)
             .then((res) => res.json())
             .then((res) => {
+                console.log(res);
                 let dataHome = res.data.items;
                 dataHome.forEach((dataItem) => {
-                    return dataItem.sectionType == "playlist" ? this.playList.push(dataItem) : "";
+                    if (dataItem.sectionType == "playlist") {
+                        this.playList.push(dataItem);
+                    } else if (dataItem.sectionType == "banner") {
+                        this.bannerList.push(dataItem);
+                    }
                 });
             });
     },
@@ -120,5 +132,10 @@ export default {
     &::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
+}
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 </style>

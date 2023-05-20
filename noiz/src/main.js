@@ -3,6 +3,7 @@ import App from "@/App.vue";
 import router from "@/router";
 import store from "@/store";
 import "@/assets/tailwind.css";
+import VueMeta from "vue-meta";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 // import { AVLine } from "vue-audio-visual";
@@ -50,6 +51,7 @@ library.add(
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("themi-fy", ThemifyIcon);
+Vue.use(VueMeta);
 // Vue.component("av-line", AVLine);
 Vue.config.productionTip = false;
 

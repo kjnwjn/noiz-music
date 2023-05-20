@@ -22,6 +22,11 @@ const mutations = {
         state.audio = new Audio();
         state.audio.src = url;
     },
+    set_audioVolume(state, value) {
+        if (state.audio) {
+            state.audio.volume = value;
+        }
+    },
     set_audioCurrentTime(state, value) {
         if (state.audio) {
             state.audio.currentTime = value;
@@ -94,8 +99,10 @@ const actions = {
     handlePlayBtn({ dispatch, commit, state }) {
         let songPercent = storage.get("songPercent") || 0;
         let currentTime = storage.get("currentTime") || 0;
+        let volume = Number(storage.get("volume") || 0.3);
         commit("set_currentTime", currentTime);
         commit("set_songPercent", songPercent);
+        commit("set_audioVolume", volume);
         dispatch(
             "Music/handlePlayAudioUrl",
             { currentTime: state.currentTime, songPercent: state.songPercent },
@@ -134,13 +141,18 @@ const actions = {
             ? commit("Music/set_currentIndex", randomIndex(currentPlaylist.length), { root: true })
             : commit("Music/set_currentIndex", currentPlaylist.indexOf(nextSong), { root: true });
         let encodeId = nextSong.encodeId;
-
+        let playlistId = rootState.Music.currentPlaylistId;
         await apiRequest(`/song/${encodeId}/streaming`)
             .then((res) => {
                 res[128]
                     ? dispatch(
                           "Music/handlePlayExactSong",
-                          { song: nextSong, index: currentPlaylist.indexOf(nextSong), playlist: currentPlaylist },
+                          {
+                              song: nextSong,
+                              index: currentPlaylist.indexOf(nextSong),
+                              playlist: currentPlaylist,
+                              playlistId,
+                          },
                           { root: true }
                       )
                     : dispatch("handleNextSong");
@@ -160,6 +172,9 @@ const actions = {
         commit;
         state;
         commit("set_volume", value);
+        if (state.audio) {
+            commit("set_audioVolume", value);
+        }
     },
 };
 

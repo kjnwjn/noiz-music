@@ -4,18 +4,31 @@ import { apiRequest } from "@/tools/helper";
 
 const namespaced = true;
 const state = {
+    metaTitle: "hello, this is the title",
     currentSong: storage.get("currentSong") || {},
     currentPlaylist: storage.get("currentPlaylist") || [],
+    currentPlaylistId: storage.get("currentPlaylistId") || "",
     currentIndex: storage.get("currentIndex") || 0,
     timeEnd: 0,
     countDownActive: false,
 };
 
-const getters = {};
+const getters = {
+    getTitle(state) {
+        return state.metaTitle;
+    },
+};
 const mutations = {
+    set_metaTitle(state, value) {
+        state.metaTitle = value;
+    },
     set_currentSong(state, value) {
         state.currentSong = value;
         storage.set("currentSong", value);
+    },
+    set_currentPlaylistId(state, value) {
+        state.currentPlaylistId = value;
+        storage.set("currentPlaylistId", value);
     },
     set_currentPlaylist(state, value) {
         state.currentPlaylist = value;
@@ -28,7 +41,7 @@ const mutations = {
 };
 
 const actions = {
-    async handlePlayExactSong({ commit, dispatch }, { song, index, playlist }) {
+    async handlePlayExactSong({ commit, dispatch }, { song, index, playlist, playlistId }) {
         commit("Controller/set_loading", true, { root: true });
         commit("Controller/destroy_audio", {}, { root: true });
 
@@ -40,16 +53,20 @@ const actions = {
                 if (url) {
                     commit("set_currentIndex", index);
                     commit("set_currentSong", { song, songStreaming: url });
+                    commit("set_currentPlaylistId", playlistId);
                     commit("set_currentPlaylist", playlist);
                     dispatch("handlePlayAudioUrl", { currentTime: 0, songPercent: 0 });
+                    commit("Controller/set_loading", false, { root: true });
                 }
             })
             .catch((e) => console.log(e));
     },
     handlePlayAudioUrl: ({ state, commit, rootState, dispatch }, { currentTime, songPercent }) => {
+        const volume = rootState.Controller.volume;
         if (state.currentSong.songStreaming) {
             commit("Controller/destroy_audio", {}, { root: true });
             commit("Controller/set_audio", state.currentSong.songStreaming, { root: true });
+            commit("Controller/set_audioVolume", volume, { root: true });
             commit("Controller/set_duration", state.currentSong.song.duration, { root: true });
             commit("Controller/set_currentTime", currentTime, { root: true });
             commit("Controller/set_audioCurrentTime", currentTime, { root: true });

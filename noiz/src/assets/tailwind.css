@@ -6,7 +6,7 @@
     --main-color: #466175;
     --bg-color: #1b2d3b;
     --text-color: #fff;
-    --text-color-hover: #1ae8e1;
+    --text-color-hover: #e28600;
     --btn-color: #6b91b9;
     --btn-color-hover: #5b7998;
     --nav-width: 250px;
@@ -14,6 +14,7 @@
     --text-size : 1rem;
     --header-height: 62px;
     --btn-width : 33px;
+    --btn-height : 33px;
     --controller-height : 91px;
   }
   *{

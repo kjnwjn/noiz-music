@@ -1,16 +1,19 @@
 <template>
-    <section class="p-4" @mouseover="isShowPlayBtn = !isShowPlayBtn" @mouseout="isShowPlayBtn = !isShowPlayBtn">
+    <section
+        class="p-4 relative"
+        @mouseover="isShowPlayBtn = !isShowPlayBtn"
+        @mouseout="isShowPlayBtn = !isShowPlayBtn"
+    >
         <div id="card-item" @click="getPlaylistDetail()">
             <div
                 class="card-img bg-contain bg-no-repeat"
                 :style="{ backgroundImage: 'url(' + cardItem.thumbnail + ')' }"
-            >
-                <div :class="['play-btn', { active: isShowPlayBtn }]">
-                    <play-btn></play-btn>
-                </div>
-            </div>
+            ></div>
             <h4 class="card-name">{{ cardItem.title }}</h4>
             <p class="card-desc">{{ cardItem.artistsNames }}</p>
+        </div>
+        <div :class="['play-btn', { active: isShowPlayBtn }]">
+            <play-btn :playlistId="cardItem.encodeId"></play-btn>
         </div>
     </section>
 </template>
@@ -54,39 +57,17 @@ export default {
 
 <style lang="scss" scoped>
 section {
-    background: #18181833;
+    background: #131718;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s linear;
     &:hover {
-        background: #18181814;
+        background: #474747;
     }
     #card-item {
         .card-img {
-            position: relative;
             border-radius: 5px;
             padding-top: 100%;
-            .play-btn {
-                transition: all 0.3s ease;
-                opacity: 0;
-                visibility: hidden;
-                position: absolute;
-                bottom: 5px;
-                right: 5px;
-
-                button {
-                    box-shadow: 0 8px 8px #0000004d;
-                    width: 55px;
-                    height: 55px;
-                    svg {
-                        font-size: 1.275rem;
-                    }
-                }
-            }
-            .play-btn.active {
-                opacity: 1;
-                visibility: visible;
-            }
         }
         h4 {
             margin: 18px 0 6px 0;
@@ -96,6 +77,28 @@ section {
             font-size: 0.8rem;
             opacity: 0.8;
         }
+    }
+    .play-btn {
+        z-index: 100;
+        transition: all 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        bottom: 35%;
+        right: 5px;
+
+        button {
+            box-shadow: 0 8px 8px #0000004d;
+            width: 55px;
+            height: 55px;
+            svg {
+                font-size: 1.275rem;
+            }
+        }
+    }
+    .play-btn.active {
+        opacity: 1;
+        visibility: visible;
     }
 }
 </style>
