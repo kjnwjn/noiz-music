@@ -20,7 +20,6 @@
                         step="0.1"
                         min="0"
                         max="100"
-                        :v-model="volume || 0"
                         @input="changeProcessBarValue($event)"
                     />
                     <span id="range-value-bar" ref="rangeValueBar"></span>
@@ -55,11 +54,11 @@ export default {
         ...mapControllerState[("volume", "audio")],
     },
     mounted() {
-        const val = Number(storage.get("volume") || 0);
+        const val = Number(storage.get("volume") || 0.2);
         this.$refs.progress.value = val * 100;
         this.handleUpdateVolume(val);
         this.$refs.rangeValueBar.style.setProperty("width", `${this.$refs.progress.value}%`);
-        console.log(this.$refs.progress.value);
+        // console.log(this.$refs.progress.value);
     },
     methods: {
         ...mapControllerMutations(["set_volume", "set_audioVolume"]),

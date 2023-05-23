@@ -7,7 +7,12 @@
         </header-container>
 
         <section class="py-4 grid gap-4 tablet:grid-cols-1 laptop:grid-cols-1 desktop:grid-cols-2" v-if="searchData">
-            <div class="top-result" v-show="searchData?.top.objectType == 'song'">
+            <div
+                class="top-result"
+                v-show="searchData?.top.objectType == 'song'"
+                @mouseover="isShowPlayBtn = !isShowPlayBtn"
+                @mouseout="isShowPlayBtn = !isShowPlayBtn"
+            >
                 <h1 class="title_section">Top Result</h1>
                 <div class="top_main-result grid grid-row-3 gap-4">
                     <div class="img-card w-fit">
@@ -20,9 +25,17 @@
                         <a href="#">{{ searchData.top.artistsNames }}</a>
                         <button>Album</button>
                     </div>
+                    <div :class="['play-btn', { active: isShowPlayBtn }]">
+                        <play-btn :songId="searchData.top.encodeId"></play-btn>
+                    </div>
                 </div>
             </div>
-            <div class="top-result" v-show="searchData?.top.objectType == 'artist'">
+            <div
+                class="top-result"
+                v-show="searchData?.top.objectType == 'artist'"
+                @mouseover="isShowPlayBtn = !isShowPlayBtn"
+                @mouseout="isShowPlayBtn = !isShowPlayBtn"
+            >
                 <h1 class="title_section">Top Result</h1>
                 <div class="top_main-result grid grid-row-3 gap-4">
                     <div class="img-card w-fit">
@@ -34,9 +47,17 @@
                     <div class="desc">
                         <button>{{ searchData.top.objectType }}</button>
                     </div>
+                    <div :class="['play-btn', { active: isShowPlayBtn }]">
+                        <play-btn :artist="searchData.songs"></play-btn>
+                    </div>
                 </div>
             </div>
-            <div class="top-result" v-show="searchData?.top.objectType == 'playlist'">
+            <div
+                class="top-result"
+                v-show="searchData?.top.objectType == 'playlist'"
+                @mouseover="isShowPlayBtn = !isShowPlayBtn"
+                @mouseout="isShowPlayBtn = !isShowPlayBtn"
+            >
                 <h1 class="title_section">Top Result</h1>
                 <div class="top_main-result grid grid-row-3 gap-4">
                     <div class="img-card w-fit">
@@ -49,6 +70,9 @@
                         <a href="#">By {{ searchData.top.artistsNames }}</a>
                         <button>{{ searchData.top.objectType }}</button>
                     </div>
+                    <div :class="['play-btn', { active: isShowPlayBtn }]">
+                        <play-btn :playlistId="searchData.top.encodeId"></play-btn>
+                    </div>
                 </div>
             </div>
             <div class="top-songs" v-if="searchData?.songs">
@@ -58,9 +82,12 @@
                 </ul>
             </div>
         </section>
-        <section class="pb-8 grid gap-y-5" v-show="searchData && searchData.topSuggest">
+        <section class="pb-8 grid gap-y-5" v-if="searchData && searchData?.topSuggest">
             <h1 class="title_section">Top Suggests</h1>
-            <div class="grid desktop:grid-cols-4 laptop:grid-cols-3 tablet:grid-cols-2 gap-6">
+            <div
+                class="grid desktop:grid-cols-4 laptop:grid-cols-3 tablet:grid-cols-2 gap-6"
+                v-if="searchData.topSuggest.length > 0"
+            >
                 <card-item
                     class="text-white"
                     v-for="(item, index) in searchData.topSuggest"
@@ -69,7 +96,7 @@
                 ></card-item>
             </div>
         </section>
-        <section class="pb-8 grid gap-y-5" v-show="searchData && searchData.playlists">
+        <section class="pb-8 grid gap-y-5" v-if="searchData && searchData.playlists">
             <h1 class="title_section">Playlist</h1>
             <div class="grid desktop:grid-cols-4 laptop:grid-cols-3 tablet:grid-cols-2 gap-6">
                 <card-item
@@ -88,6 +115,7 @@ import HeaderContainer from "@/components/main/Header.component";
 import SearchBox from "@/components/searchBox/SearchBox.component";
 import SongItem from "@/components/section/SearchSection/SongItem";
 import CardItem from "@/components/card/CardItem.component";
+import playBtn from "@/components/button/PlayButton.component";
 
 import { mapState as mapSearchState, mapActions as mapSearchActions } from "@/store/helper/Search";
 
@@ -101,10 +129,12 @@ export default {
         SearchBox,
         SongItem,
         CardItem,
+        playBtn,
     },
     data: function () {
         return {
             playList: [],
+            isShowPlayBtn: false,
         };
     },
     computed: {
@@ -125,7 +155,9 @@ export default {
     color: white;
     min-height: 300px;
     border-radius: 5px;
+
     .top_main-result {
+        position: relative;
         max-height: 76%;
         border-radius: 10px;
         cursor: pointer;
@@ -160,6 +192,28 @@ export default {
                 font-size: 0.8rem;
                 font-weight: 600;
             }
+        }
+        .play-btn {
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            bottom: 10%;
+            right: 0;
+
+            button {
+                box-shadow: 0 8px 8px #0000004d;
+                width: 55px;
+                height: 55px;
+                svg {
+                    font-size: 1.275rem;
+                }
+            }
+        }
+        .play-btn.active {
+            opacity: 1;
+            visibility: visible;
         }
         &:hover {
             background: #575149;

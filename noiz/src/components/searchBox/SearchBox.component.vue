@@ -17,7 +17,12 @@ import {
     mapActions as mapSearchActions,
     mapMutations as mapSearchMutations,
 } from "@/store/helper/Search";
+import ThemifyIcon from "vue-themify-icons";
+
 export default {
+    components: {
+        ThemifyIcon,
+    },
     computed: {
         ...mapSearchState(["topSearch"]),
     },

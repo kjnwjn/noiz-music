@@ -30,6 +30,9 @@ export default {
         playlistId: {
             type: String,
         },
+        // songId :{
+        //     type: String,
+        // }
     },
     methods: {
         ...mapMusicActions(["handlePlayExactSong"]),
@@ -37,6 +40,11 @@ export default {
         async handlePlayInComponent() {
             let data = null;
             let playList = null;
+            // if(this.playlistId){
+
+            //     // this.handlePlayBtn();
+            // // eventBus.$emit("pauseAction", false);
+            // }
             await axios
                 .get(`${apiUrl}/playlist/${this.playlistId}/details?api_key=${apiKey}`)
                 .then(function (res) {
@@ -63,8 +71,6 @@ export default {
                 this.handlePlayExactSong(data);
                 eventBus.$emit("pauseAction", false);
             }
-            // this.handlePlayBtn();
-            // eventBus.$emit("pauseAction", false);
         },
         handlePauseInComponent() {
             this.handlePause();
