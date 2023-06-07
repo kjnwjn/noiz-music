@@ -83,7 +83,9 @@ function onError(error) {
 function onListening() {
     var addr = server.address();
     var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-    var object = `{ "local": "http://localhost:${addr.port}", "network": "http://${ip.address()}:${addr.port}" }`;
+    var object = `{ "local": "http://${process.env.HOST}:${addr.port}", "network": "http://${ip.address()}:${
+        addr.port
+    }" }`;
     var json = JSON.parse(object);
     console.log("Server running on:");
     console.dir(json);
